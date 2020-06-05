@@ -1,48 +1,5 @@
 /* Add your Application JavaScript */
-const Upload =Vue.component('upload-form',{
-    template:`
-    <div>
-        <form @submit.prevent="uploadPhoto" enctype="multipart/form-data" id="uploadForm">
-            <div class="form-group">
-                <label for="description">Description</label>
-                <textarea class="form-control" name="description" id="description"></textarea>
-            </div>
-            <div class="form-group">
-                <label for="photo">Photo</label>
-                <input name="photo" id="photo" type="file">
-            </div>
-             <button type=submit class="btn btn-primary" > Submit </button>
-        </form>
-    </div>
-    `,
-    methods: {
-        uploadPhoto: function(){
-            self = this;
-            let uploadForm = document.getElementById('uploadForm');
-            let form_data = new FormData(uploadForm); 
-              fetch("/api/upload", {
-                  
-                method: 'POST',
-                body: form_data,
-               headers: {
-                'X-CSRFToken': token
-                },
-                credentials: 'same-origin' 
-               })
-                .then(function (response) {
-                return response.json();
-                })
-                .then(function (jsonResponse) {
-                // display a success message
-                console.log(jsonResponse)              
-                })
-                .catch(function (error) {
-                console.log(error);
-                });
-        }
-    },
- 
-});
+
 
 
 
@@ -79,6 +36,58 @@ Vue.component('app-footer', {
     </footer>
     `
 });
+const Upload =Vue.component('upload-form',{
+    template:`
+    <div>
+        <form @submit.prevent="uploadPhoto" enctype="multipart/form-data" id="uploadForm">
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea class="form-control" name="description" id="description"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="photo">Photo</label>
+                <input name="photo" id="photo" type="file">
+            </div>
+             <button type=submit class="btn btn-primary" > Submit </button>
+        </form>
+    </div>
+    `,
+
+    methods: { 
+
+        uploadPhoto:function(){
+        this.file = '';
+        this.des = '';
+        this.json = '';
+
+        const uploadForm = document.getElementById('uploadForm');
+        const form_data = new FormData(uploadForm); 
+        fetch("/api/upload", 
+        {
+           method: 'POST',
+           body: form_data,
+           headers: {'X-CSRFToken': token},
+           credentials: 'same-origin' 
+        }) 
+        .then(function (response) {
+                  
+                 
+            return response.json();
+            })
+            .then(function (jsonResponse) {
+              console.log(jsonResponse);
+                
+            })
+            .catch(function (error) {
+            
+            console.log(error);
+            });
+            
+    }
+},
+
+}); 
+          
 
 const Home = Vue.component('home', {
    template: `
