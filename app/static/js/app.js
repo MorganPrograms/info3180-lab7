@@ -39,6 +39,18 @@ Vue.component('app-footer', {
 const Upload =Vue.component('upload-form',{
     template:`
     <div>
+    <div id="feedback" >
+    <div  v-if="message" class="alert alert-success" style="height:5em;">
+
+        {{ message }}
+    </div>
+    <div v-if ="errors" class="alert alert-danger" style="height:5em;">
+        <ul>
+            <li v-for="(error, index) in errors" :key="index">{{error}}</li>
+        </ul>
+     </div>   
+        </div>
+
         <form @submit.prevent="uploadPhoto" enctype="multipart/form-data" id="uploadForm">
             <div class="form-group">
                 <label for="description">Description</label>
@@ -52,14 +64,18 @@ const Upload =Vue.component('upload-form',{
         </form>
     </div>
     `,
-
+    data: function() {
+        return {
+            errors: null,
+            message: null
+        }
+    },
     methods: { 
 
         uploadPhoto:function(){
-        this.file = '';
-        this.des = '';
-        this.json = '';
-
+ 
+            this.errors = null
+            this.message = null
         const uploadForm = document.getElementById('uploadForm');
         const form_data = new FormData(uploadForm); 
         fetch("/api/upload", 
@@ -69,24 +85,24 @@ const Upload =Vue.component('upload-form',{
            headers: {'X-CSRFToken': token},
            credentials: 'same-origin' 
         }) 
-        .then(function (response) {
-                  
-                 
-            return response.json();
-            })
-            .then(function (jsonResponse) {
-              console.log(jsonResponse);
-                
-            })
-            .catch(function (error) {
-            
-            console.log(error);
-            });
-            
-    }
-},
-
-}); 
+        .then((response) => {
+            return response.json()
+        })
+        .then((jsonResponse) => {
+            if(jsonResponse.message) {
+                this.message = jsonResponse.message
+            } else {
+                this.errors = jsonResponse.errors
+    
+            }
+        })
+        .catch((error) => {
+            this.errors = ["Unknown Error!"]
+            console.log(error)
+        });
+    },
+}
+})
           
 
 const Home = Vue.component('home', {
